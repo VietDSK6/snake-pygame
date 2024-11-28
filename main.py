@@ -1,4 +1,4 @@
-# Import các module và dependency cần thiết
+# Import các module cần thiết
 from game import *  # Import hằng số game, sprites và hàm tiện ích
 from menus import *  # Import các thành phần và hàm của hệ thống menu
 
