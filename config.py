@@ -31,7 +31,7 @@ FONTS = {
 DIFFICULTIES = {
     "Easy": 7,
     "Medium": 10,
-    "Hard": 12,
-    "Harder": 15,
-    "Impossible": 25
+    "Hard": 15,
+    "Harder": 20,
+    "Impossible": 30
 }
