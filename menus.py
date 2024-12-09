@@ -86,7 +86,7 @@ def main_menu(game_window):
 
 
 # Menu hiển thị khi người chơi thua
-def death_menu(game_window, score, difficulty):
+def death_menu(game_window, score):
     # Phát âm thanh thua cuộc
     death_sound.play()
     # Giảm âm lượng nhạc nền
