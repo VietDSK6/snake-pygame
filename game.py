@@ -148,7 +148,7 @@ def game_loop(game_window, difficulty_name):
         # Kiểm tra tự va chạm (điều kiện game over)
         for block in game_state['snake_segments'][1:]:
             if block[0] == game_state['snake_pos'][0] and block[1] == game_state['snake_pos'][1]:
-                return death_menu(game_window, game_state['score'], difficulty_name)
+                return death_menu(game_window, game_state['score'])
 
         # Cập nhật hiển thị điểm và làm mới màn hình
         show_score(game_window, game_state['score'], difficulty_name, 1, COLORS['text'], 24)
