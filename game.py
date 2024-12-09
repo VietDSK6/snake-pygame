@@ -143,7 +143,7 @@ def game_loop(game_window, difficulty_name):
         # Kiểm tra va chạm tường (điều kiện game over)
         if (game_state['snake_pos'][0] < 0 or game_state['snake_pos'][0] > FRAME_SIZE_X - SPRITE_SIZE or
                 game_state['snake_pos'][1] < 0 or game_state['snake_pos'][1] > FRAME_SIZE_Y - SPRITE_SIZE):
-            return death_menu(game_window, game_state['score'], difficulty_name)
+            return death_menu(game_window, game_state['score'])
 
         # Kiểm tra tự va chạm (điều kiện game over)
         for block in game_state['snake_segments'][1:]:
