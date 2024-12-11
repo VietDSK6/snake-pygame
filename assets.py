@@ -15,4 +15,4 @@ logo = load_image('assets/images/logo.png', 1000, 400)
 # Tai am thanh
 eating_sound = pygame.mixer.Sound('assets/sounds/eat.wav')
 death_sound = pygame.mixer.Sound('assets/sounds/die.wav')
-background_music = pygame.mixer.music.load('assets/sounds/background.mp3')
+pygame.mixer.music.load('assets/sounds/background.mp3')

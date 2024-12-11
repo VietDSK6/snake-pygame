@@ -1,7 +1,4 @@
-import pygame
 import random
-from config import *
-from assets import *
 from menus import *
 from ui import Button, show_score
 
