@@ -3,7 +3,6 @@ from config import *
 from assets import *
 from ui import Button
 
-
 # Hàm hiển thị menu chung cho tất cả các màn hình
 def show_menu(game_window, text, buttons, logo_img=None):
     while True:
