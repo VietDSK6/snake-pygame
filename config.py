@@ -1,4 +1,6 @@
 import pygame
+import json
+import os
 
 # Thong so cua cua so
 FRAME_SIZE_X = 1280
@@ -35,3 +37,26 @@ DIFFICULTIES = {
     "Harder": 20,
     "Impossible": 30
 }
+
+HIGH_SCORES_FILE = 'highscores.json'
+
+def load_high_scores():
+    """Load high scores from file or return default if not exists."""
+    if not os.path.exists(HIGH_SCORES_FILE):
+        return {}
+    try:
+        with open(HIGH_SCORES_FILE, 'r') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return {}
+
+def save_high_scores(high_scores):
+    """Save high scores to file."""
+    try:
+        with open(HIGH_SCORES_FILE, 'w') as f:
+            json.dump(high_scores, f)
+    except IOError:
+        print("Could not save high scores")
+
+# Load high scores when config is imported
+HIGH_SCORES = load_high_scores()

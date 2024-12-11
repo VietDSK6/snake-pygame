@@ -1,7 +1,7 @@
 import sys
 from config import *
 from assets import *
-from ui import Button
+from ui import Button, InputBox
 
 # Hàm hiển thị menu chung cho tất cả các màn hình
 def show_menu(game_window, text, buttons, logo_img=None):
@@ -84,13 +84,89 @@ def main_menu(game_window):
 
 
 # Menu hiển thị khi người chơi thua
+def name_input_menu(game_window):
+    """Menu for entering player name."""
+    input_box = InputBox(
+        FRAME_SIZE_X / 2 - 200,
+        FRAME_SIZE_Y / 2,
+        400, 50
+    )
+
+    while True:
+        game_window.fill(COLORS['background'])
+        game_window.blit(background_img, (0, 0))
+
+        # Render title
+        title_font = pygame.font.SysFont('jetbrain', 48)
+        title_text = title_font.render("Enter Your Name", True, COLORS['text'])
+        title_rect = title_text.get_rect(center=(FRAME_SIZE_X / 2, FRAME_SIZE_Y / 4))
+        game_window.blit(title_text, title_rect)
+
+        # Draw input box
+        input_box.draw(game_window)
+
+        # Create submit button
+        submit_button = Button(
+            FRAME_SIZE_X / 2 - 125,
+            FRAME_SIZE_Y / 2 + 100,
+            250, 60,
+            "Submit",
+            COLORS['success']
+        )
+        submit_button.draw(game_window)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            # If enter is pressed while input box is active
+            if input_box.handle_event(event):
+                # Validate name
+                name = input_box.text.strip()
+                if name and len(name) <= 10:
+                    return name
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if submit_button.is_clicked(event.pos):
+                    # Validate name
+                    name = input_box.text.strip()
+                    if name and len(name) <= 10:
+                        return name
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return None
+
 def death_menu(game_window, score):
-    # Phát âm thanh thua cuộc
     death_sound.play()
-    # Giảm âm lượng nhạc nền
     pygame.mixer.music.set_volume(0.3)
 
-    # Tạo các nút cho menu thua cuộc
+    # Update high score
+    difficulty = "Medium"  # You might want to pass actual difficulty
+    player_name = name_input_menu(game_window)
+
+    if player_name:
+        # Update high scores
+        if difficulty not in HIGH_SCORES:
+            HIGH_SCORES[difficulty] = []
+
+        HIGH_SCORES[difficulty].append({
+            'name': player_name,
+            'score': score
+        })
+
+        # Sort and keep top 5 scores
+        HIGH_SCORES[difficulty] = sorted(
+            HIGH_SCORES[difficulty],
+            key=lambda x: x['score'],
+            reverse=True
+        )[:5]
+
+        save_high_scores(HIGH_SCORES)
+
     buttons = [
         Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2, 250, 60, "Play Again", COLORS['success']),
         Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 80, 250, 60, "Difficulty", COLORS['primary']),
@@ -99,7 +175,6 @@ def death_menu(game_window, score):
 
     choice = show_menu(game_window, f"GAME OVER Score: {score}", buttons)
 
-    # Khôi phục âm lượng nhạc nền nếu không thoát game
     if choice != "Quit":
         pygame.mixer.music.set_volume(0.5)
 

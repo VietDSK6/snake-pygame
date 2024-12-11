@@ -1,4 +1,3 @@
-import pygame
 from config import *
 
 class Button:
@@ -29,8 +28,70 @@ class Button:
     def is_clicked(self, pos):
         return self.rect.collidepoint(pos)
 
+
+class InputBox:
+    def __init__(self, x, y, w, h, text=''):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.color_inactive = COLORS['primary']
+        self.color_active = COLORS['secondary']
+        self.color = self.color_inactive
+        self.text = text
+        self.txt_surface = FONTS['button'].render(text, True, COLORS['text'])
+        self.active = False
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable
+                self.active = not self.active
+            else:
+                self.active = False
+
+            # Change the input box color
+            self.color = self.color_active if self.active else self.color_inactive
+
+        if event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_RETURN:
+                    # If enter is pressed, we're done
+                    return True
+                elif event.key == pygame.K_BACKSPACE:
+                    # Remove last character
+                    self.text = self.text[:-1]
+                else:
+                    # Add valid characters
+                    if len(self.text) < 10:
+                        if event.unicode.isalnum() or event.unicode.isspace():
+                            self.text += event.unicode
+
+                # Re-render the text
+                self.txt_surface = FONTS['button'].render(self.text, True, COLORS['text'])
+
+        return False
+
+    def draw(self, screen):
+        # Blit the text
+        pygame.draw.rect(screen, self.color, self.rect, 2)
+
+        # Render placeholder if no text
+        if not self.text:
+            placeholder = FONTS['button'].render("Enter Your Name", True, pygame.Color(100, 100, 100))
+            txt_rect = placeholder.get_rect(center=self.rect.center)
+            screen.blit(placeholder, txt_rect)
+        else:
+            txt_rect = self.txt_surface.get_rect(center=self.rect.center)
+            screen.blit(self.txt_surface, txt_rect)
+
 def show_score(surface, score, difficulty, choice, color, size):
-    score_surface = FONTS['score'].render(f'Score: {score} | Difficulty: {difficulty}', True, color)
+    high_score = max(
+        [entry['score'] for entry in HIGH_SCORES.get(difficulty, [])] + [0]
+    )
+
+    score_surface = FONTS['score'].render(
+        f'Score: {score} | High Score: {high_score} | Difficulty: {difficulty}',
+        True, color
+    )
     score_rect = score_surface.get_rect()
 
     padding = 10
