@@ -43,7 +43,6 @@ class InputBox:
         if event.type == pygame.MOUSEBUTTONDOWN:
             # If the user clicked on the input_box rect
             if self.rect.collidepoint(event.pos):
-                # Toggle the active variable
                 self.active = not self.active
             else:
                 self.active = False
@@ -54,27 +53,27 @@ class InputBox:
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    # If enter is pressed, we're done
+                    # Kiem tra enter
                     return True
                 elif event.key == pygame.K_BACKSPACE:
-                    # Remove last character
+                    # Xoa ki tu cuoi
                     self.text = self.text[:-1]
                 else:
-                    # Add valid characters
+                    # Kiem tra cac ki tu khong phu hop
                     if len(self.text) < 10:
                         if event.unicode.isalnum() or event.unicode.isspace():
                             self.text += event.unicode
 
-                # Re-render the text
+                # Render lai cac text
                 self.txt_surface = FONTS['button'].render(self.text, True, COLORS['text'])
 
         return False
 
     def draw(self, screen):
-        # Blit the text
+        # Ve lai nut
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
-        # Render placeholder if no text
+        # Placeholder neu nguoi dung chua nhap
         if not self.text:
             placeholder = FONTS['button'].render("Enter Your Name", True, pygame.Color(100, 100, 100))
             txt_rect = placeholder.get_rect(center=self.rect.center)
@@ -84,14 +83,7 @@ class InputBox:
             screen.blit(self.txt_surface, txt_rect)
 
 def show_score(surface, score, difficulty, choice, color, size):
-    high_score = max(
-        [entry['score'] for entry in HIGH_SCORES.get(difficulty, [])] + [0]
-    )
-
-    score_surface = FONTS['score'].render(
-        f'Score: {score} | High Score: {high_score} | Difficulty: {difficulty}',
-        True, color
-    )
+    score_surface = FONTS['score'].render(f'Score: {score} | Difficulty: {difficulty}', True, color)
     score_rect = score_surface.get_rect()
 
     padding = 10

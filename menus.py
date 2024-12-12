@@ -3,6 +3,57 @@ from config import *
 from assets import *
 from ui import Button, InputBox
 
+def high_score(game_window):
+    buttons = [
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y - 100, 250, 60, "Back", COLORS['primary'])
+    ]
+
+    while True:
+        game_window.fill(COLORS['background'])
+        game_window.blit(background_img, (0, 0))
+
+        # Title
+        title_font = pygame.font.SysFont('jetbrain', 64)
+        title_text = title_font.render("HIGH SCORES", True, COLORS['text'])
+        title_rect = title_text.get_rect(center=(FRAME_SIZE_X / 2, 50))
+        game_window.blit(title_text, title_rect)
+
+        score_font = pygame.font.SysFont('jetbrain', 32)
+        y_offset = 150
+        for difficulty, scores in HIGH_SCORES.items():
+            y_offset += 40
+            for i, score in enumerate(sorted(scores, key=lambda x: x['score'], reverse=True)[:3], 1):
+                score_text = score_font.render(
+                    f"{i}. {score['name']} - {score['score']}",
+                    True,
+                    COLORS['text']
+                )
+                score_rect = score_text.get_rect(center=(FRAME_SIZE_X / 2, y_offset))
+                game_window.blit(score_text, score_rect)
+                y_offset += 40
+
+
+        # Nut quay ve
+        for button in buttons:
+            button.draw(game_window)
+
+        pygame.display.flip()
+
+        # Xu li cac su kien
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for button in buttons:
+                    if button.is_clicked(event.pos):
+                        return button.text
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return "Back"
+
 # Hàm hiển thị menu chung cho tất cả các màn hình
 def show_menu(game_window, text, buttons, logo_img=None):
     while True:
@@ -77,14 +128,21 @@ def difficulty_menu(game_window):
 def main_menu(game_window):
     # Tạo hai nút: Start Game và Quit
     buttons = [
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2, 250, 60, "Start Game", COLORS['success']),
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 80, 250, 60, "Quit", COLORS['accent'])
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 - 50, 250, 60, "Start Game", COLORS['success']),
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 20, 250, 60, "High Scores", COLORS['primary']),
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 90, 250, 60, "Quit", COLORS['accent'])
     ]
-    return show_menu(game_window, "Sizzle Sizzle", buttons, logo)
+    while True:
+        choice = show_menu(game_window, "Sizzle Sizzle", buttons, logo)
+
+        if choice == "High Scores":
+            high_score(game_window)
+        else:
+            return choice
 
 
 # Menu hiển thị khi người chơi thua
-def name_input_menu(game_window):
+def get_name(game_window):
     """Menu for entering player name."""
     input_box = InputBox(
         FRAME_SIZE_X / 2 - 200,
@@ -96,16 +154,16 @@ def name_input_menu(game_window):
         game_window.fill(COLORS['background'])
         game_window.blit(background_img, (0, 0))
 
-        # Render title
+        # Title
         title_font = pygame.font.SysFont('jetbrain', 48)
         title_text = title_font.render("Enter Your Name", True, COLORS['text'])
         title_rect = title_text.get_rect(center=(FRAME_SIZE_X / 2, FRAME_SIZE_Y / 4))
         game_window.blit(title_text, title_rect)
 
-        # Draw input box
+        # ve nut input
         input_box.draw(game_window)
 
-        # Create submit button
+        # tao nut submit
         submit_button = Button(
             FRAME_SIZE_X / 2 - 125,
             FRAME_SIZE_Y / 2 + 100,
@@ -122,16 +180,16 @@ def name_input_menu(game_window):
                 pygame.quit()
                 sys.exit()
 
-            # If enter is pressed while input box is active
+            # Enter khi o input da duoc bam
             if input_box.handle_event(event):
                 # Validate name
                 name = input_box.text.strip()
                 if name and len(name) <= 10:
                     return name
-
+            # kiem tra nut input da duoc active chua
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if submit_button.is_clicked(event.pos):
-                    # Validate name
+                    # Kiem tra ten
                     name = input_box.text.strip()
                     if name and len(name) <= 10:
                         return name
@@ -145,11 +203,11 @@ def death_menu(game_window, score):
     pygame.mixer.music.set_volume(0.3)
 
     # Update high score
-    difficulty = "Medium"  # You might want to pass actual difficulty
-    player_name = name_input_menu(game_window)
+    difficulty = "Medium"
+    player_name = get_name(game_window)
 
     if player_name:
-        # Update high scores
+        # Cap nhat diem cao
         if difficulty not in HIGH_SCORES:
             HIGH_SCORES[difficulty] = []
 
@@ -158,7 +216,7 @@ def death_menu(game_window, score):
             'score': score
         })
 
-        # Sort and keep top 5 scores
+        # Sap xep va chi lay 5 diem cao nhat
         HIGH_SCORES[difficulty] = sorted(
             HIGH_SCORES[difficulty],
             key=lambda x: x['score'],
@@ -168,9 +226,9 @@ def death_menu(game_window, score):
         save_high_scores(HIGH_SCORES)
 
     buttons = [
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2, 250, 60, "Play Again", COLORS['success']),
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 80, 250, 60, "Difficulty", COLORS['primary']),
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 160, 250, 60, "Quit", COLORS['accent'])
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 - 50, 250, 60, "Play Again", COLORS['success']),
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 20, 250, 60, "Main menu", COLORS['primary']),
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 90, 250, 60, "Quit", COLORS['accent'])
     ]
 
     choice = show_menu(game_window, f"GAME OVER Score: {score}", buttons)
