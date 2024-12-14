@@ -23,18 +23,18 @@ def main():
     while True:
         # Hiển thị menu chính và nhận lựa chọn người chơi
         choice = main_menu(game_window)
-        if choice == "Quit":
+        if choice[0] == "Quit":
             pygame.mixer.music.stop()  # Dừng nhạc trước khi thoát
             break
 
         # Xử lý chuyển đổi trạng thái game
-        while choice == "Start Game" or choice == "Play Again" or choice == "Change Difficulty":
+        while choice[0] == "Start Game" or choice[0] == "Play Again" or choice[0] == "Change Difficulty":
             # Hiển thị menu độ khó nếu bắt đầu game mới hoặc thay đổi độ khó
-            if choice == "Start Game" or choice == "Change Difficulty":
+            if choice[0] == "Start Game" or choice[0] == "Change Difficulty":
                 difficulty = difficulty_menu(game_window)
 
             # Bắt đầu vòng lặp game với độ khó đã chọn
-            choice = game_loop(game_window, difficulty)
+            choice = game_loop(game_window, difficulty, choice[1])
             if choice == "Quit":
                 pygame.mixer.music.stop()  # Dừng nhạc trước khi thoát
                 pygame.quit()

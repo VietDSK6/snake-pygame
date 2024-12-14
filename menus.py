@@ -3,6 +3,42 @@ from config import *
 from assets import *
 from ui import Button, InputBox
 
+def color_selection_menu(game_window):
+    global CURRENT_SNAKE_COLOR
+
+    # Thiết lập kích thước và khoảng cách giữa các nút
+    button_width = 200
+    button_height = 60
+    button_spacing = 20
+    total_height = (button_height + button_spacing) * len(SNAKE_COLORS)
+    start_y = (FRAME_SIZE_Y - total_height) // 1.5
+
+    # Tạo danh sách các nút màu
+    buttons = []
+    for i, color in enumerate(SNAKE_COLORS.keys()):
+        y = start_y + i * (button_height + button_spacing)
+        # Nút mặc định có màu khác biệt
+        btn_color = COLORS['primary'] if color == CURRENT_SNAKE_COLOR else COLORS['success']
+        buttons.append(Button(
+            FRAME_SIZE_X / 2 - button_width / 2,
+            y,
+            button_width,
+            button_height,
+            color,
+            btn_color
+        ))
+
+    choice = show_menu(game_window, "SELECT SNAKE COLOR", buttons)
+
+    print(f"Menu Choice: {choice}")
+
+    if choice in SNAKE_COLORS:
+        # Explicitly update the global config variable
+        CURRENT_SNAKE_COLOR = choice
+        print(f"Snake Color Updated to: {CURRENT_SNAKE_COLOR}")
+
+    return CURRENT_SNAKE_COLOR
+
 def high_score(game_window):
     buttons = [
         Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y - 100, 250, 60, "Back", COLORS['primary'])
@@ -126,19 +162,21 @@ def difficulty_menu(game_window):
 
 # Menu chính của game
 def main_menu(game_window):
-    # Tạo hai nút: Start Game và Quit
+    # Cac nut
     buttons = [
         Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 - 50, 250, 60, "Start Game", COLORS['success']),
         Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 20, 250, 60, "High Scores", COLORS['primary']),
-        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 90, 250, 60, "Quit", COLORS['accent'])
+        Button(FRAME_SIZE_X / 2 - 125, FRAME_SIZE_Y / 2 + 90, 250, 60, "Quit", COLORS['accent']),
+        Button(FRAME_SIZE_X / 2 + 500, FRAME_SIZE_Y / 2 - 350, 120, 60, "Skins", COLORS['primary']),
     ]
     while True:
         choice = show_menu(game_window, "Sizzle Sizzle", buttons, logo)
-
         if choice == "High Scores":
             high_score(game_window)
+        elif choice == "Skins":
+            color_selection_menu(game_window)
         else:
-            return choice
+            return [choice, CURRENT_SNAKE_COLOR]
 
 
 # Menu hiển thị khi người chơi thua

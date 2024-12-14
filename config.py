@@ -2,13 +2,13 @@ import pygame
 import json
 import os
 
+
+pygame.init()
+pygame.mixer.init()
 # Thong so cua cua so
 FRAME_SIZE_X = 1280
 FRAME_SIZE_Y = 720
 SPRITE_SIZE = 50
-
-pygame.init()
-pygame.mixer.init()
 
 # Cac mau sac su dung trong game
 COLORS = {
@@ -21,6 +21,15 @@ COLORS = {
     'text': pygame.Color(235, 248, 255)
 }
 
+# Snake color configuration
+SNAKE_COLORS = {
+    'Green': {},
+    'Red': {},
+    'Blue': {}
+}
+
+DEFAULT_SNAKE_COLOR = 'Green'
+CURRENT_SNAKE_COLOR = os.getenv('SNAKE_COLOR', DEFAULT_SNAKE_COLOR)
 # Font chu
 FONTS = {
     'title': pygame.font.Font('assets/fonts/Roboto-Bold.ttf', 72),

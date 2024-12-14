@@ -1,6 +1,6 @@
 import random
 from menus import *
-from ui import Button, show_score
+from ui import show_score
 
 
 # Hàm lấy góc xoay cho sprite rắn dựa trên hướng di chuyển
@@ -44,8 +44,7 @@ def init_game():
         'score': 0  # Điểm số ban đầu
     }
 
-def game_loop(game_window, difficulty_name):
-
+def game_loop(game_window, difficulty_name, color):
     # Khởi tạo cài đặt game dựa trên độ khó đã chọn
     difficulty = DIFFICULTIES[difficulty_name]
     game_state = init_game()
@@ -122,16 +121,22 @@ def game_loop(game_window, difficulty_name):
         # Vẽ các phần của rắn với hướng xoay thích hợp
         for i, pos in enumerate(game_state['snake_segments']):
             if i == 0:  # Vẽ đầu
-                rotated_head = pygame.transform.rotate(snake_head,
-                                                       get_rotation_angle(game_state['segment_directions'][i]))
+                rotated_head = pygame.transform.rotate(
+                    SNAKE_COLORS[color]['head'],
+                    get_rotation_angle(game_state['segment_directions'][i])
+                )
                 game_window.blit(rotated_head, tuple(pos))
             elif i == len(game_state['snake_segments']) - 1:  # Vẽ đuôi
-                rotated_tail = pygame.transform.rotate(snake_tail,
-                                                       get_rotation_angle(game_state['segment_directions'][i]))
+                rotated_tail = pygame.transform.rotate(
+                    SNAKE_COLORS[color]['tail'],
+                    get_rotation_angle(game_state['segment_directions'][i])
+                )
                 game_window.blit(rotated_tail, tuple(pos))
             else:  # Vẽ thân
-                rotated_body = pygame.transform.rotate(snake_body,
-                                                       get_rotation_angle(game_state['segment_directions'][i]))
+                rotated_body = pygame.transform.rotate(
+                    SNAKE_COLORS[color]['body'],
+                    get_rotation_angle(game_state['segment_directions'][i])
+                )
                 game_window.blit(rotated_body, tuple(pos))
 
         # Vẽ sprite thức ăn
