@@ -29,7 +29,7 @@ SNAKE_COLORS = {
 }
 
 DEFAULT_SNAKE_COLOR = 'Green'
-CURRENT_SNAKE_COLOR = os.getenv('SNAKE_COLOR', DEFAULT_SNAKE_COLOR)
+CURRENT_SNAKE_COLOR = DEFAULT_SNAKE_COLOR
 # Font chu
 FONTS = {
     'title': pygame.font.Font('assets/fonts/Roboto-Bold.ttf', 72),
